@@ -106,13 +106,9 @@ const Topics: React.FC = () => {
   }, []);
 
   const handleTopicClick = (topicId: string, questionCount: number) => {
-    if (questionCount === 0) {
-      alert(
-        "Bu kategoriyada hali savollar mavjud emas. Iltimos, admin panelidan savollar qo'shing.",
-      );
-      return;
-    }
-    navigate(`/quiz?topic=${topicId}`);
+    // Agar savollar bo'lmasa, hech narsa qilmaymiz
+    if (questionCount === 0) return;
+    navigate(`/quiz?topic=${topicId}&count=20`);
   };
 
   return (
@@ -161,59 +157,83 @@ const Topics: React.FC = () => {
           <>
             {/* Topics Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-              {topics.map((topic) => (
-                <div
-                  key={topic.id}
-                  onClick={() =>
-                    handleTopicClick(topic.id, topic.questionCount)
-                  }
-                  className={`bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 transition-all shadow-sm ${
-                    topic.questionCount === 0
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:border-blue-500 dark:hover:border-blue-500 cursor-pointer group hover:shadow-lg active:scale-98"
-                  }`}
-                >
+              {topics.map((topic) => {
+                const hasQuestions = topic.questionCount > 0;
+                return (
                   <div
-                    className={`w-12 h-12 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl bg-gradient-to-br ${topic.color} flex items-center justify-center text-white mb-3 sm:mb-4 ${
-                      topic.questionCount > 0 ? "group-hover:scale-110" : ""
-                    } transition-transform`}
+                    key={topic.id}
+                    onClick={() =>
+                      hasQuestions &&
+                      handleTopicClick(topic.id, topic.questionCount)
+                    }
+                    className={`bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 transition-all shadow-sm ${
+                      hasQuestions
+                        ? "border-slate-200 dark:border-slate-700 hover:border-blue-500 dark:hover:border-blue-400 cursor-pointer group hover:shadow-xl hover:-translate-y-1 active:scale-98"
+                        : "border-slate-200 dark:border-slate-700 opacity-60 cursor-not-allowed bg-slate-50 dark:bg-slate-800/50"
+                    }`}
                   >
-                    {topic.icon}
+                    <div className="flex items-start gap-4 mb-4">
+                      <div
+                        className={`w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br ${topic.color} flex items-center justify-center text-white flex-shrink-0 ${
+                          hasQuestions
+                            ? "group-hover:scale-110 shadow-lg"
+                            : "opacity-75"
+                        } transition-transform`}
+                      >
+                        {topic.icon}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white mb-1 line-clamp-1">
+                          {topic.nameUz}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+                          {topic.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-700">
+                      <div className="flex items-center gap-2">
+                        {hasQuestions ? (
+                          <>
+                            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            <span className="text-sm font-semibold text-green-600 dark:text-green-400">
+                              {topic.questionCount} ta savol
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                            <span className="text-sm font-medium text-red-500 dark:text-red-400">
+                              Savol yo'q
+                            </span>
+                          </>
+                        )}
+                      </div>
+
+                      {hasQuestions && (
+                        <div className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:gap-2.5 transition-all">
+                          <span>Boshlash</span>
+                          <svg
+                            className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                   </div>
-
-                  <h3 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white mb-1.5 sm:mb-2 line-clamp-1">
-                    {topic.nameUz}
-                  </h3>
-
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-3 sm:mb-4 line-clamp-2 min-h-[2.5rem] sm:min-h-[3rem]">
-                    {topic.description}
-                  </p>
-
-                  <div className="flex items-center justify-between gap-2">
-                    <span
-                      className={`text-xs sm:text-sm font-medium ${
-                        topic.questionCount === 0
-                          ? "text-red-500 dark:text-red-400"
-                          : "text-slate-500 dark:text-slate-400"
-                      }`}
-                    >
-                      {topic.questionCount === 0
-                        ? "Savol yo'q"
-                        : `${topic.questionCount} ta savol`}
-                    </span>
-                    <button
-                      className={`px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-colors ${
-                        topic.questionCount === 0
-                          ? "bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 cursor-not-allowed"
-                          : "bg-blue-600 hover:bg-blue-700 text-white"
-                      }`}
-                      disabled={topic.questionCount === 0}
-                    >
-                      Boshlash
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Info Box */}

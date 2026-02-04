@@ -12,6 +12,10 @@ import {
   Zap,
   Star,
   AlertCircle,
+  Heart,
+  CreditCard,
+  Copy,
+  Check,
 } from "lucide-react";
 import {
   getResults,
@@ -29,6 +33,8 @@ const UserDashboard: React.FC = () => {
   const [history, setHistory] = useState<TestResult[]>([]);
   const [progress, setProgress] = useState<any>(null);
   const [questionCount, setQuestionCount] = useState(20);
+  const [showDonation, setShowDonation] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -40,6 +46,13 @@ const UserDashboard: React.FC = () => {
 
   const startTest = () => {
     navigate(`/quiz?count=${questionCount}`);
+  };
+
+  const copyCardNumber = () => {
+    const cardNumber = "8600 1234 5678 9012"; // Random karta raqami
+    navigator.clipboard.writeText(cardNumber.replace(/\s/g, ""));
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const lastResult = history.length > 0 ? history[0] : null;
@@ -325,6 +338,87 @@ const UserDashboard: React.FC = () => {
             <BookOpen size={18} className="sm:w-5 sm:h-5" />
             <span className="text-sm sm:text-base">O'quv Materiallari</span>
           </button>
+        </div>
+
+        {/* Donation Section */}
+        <div className="bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/10 dark:to-purple-900/10 rounded-xl sm:rounded-2xl shadow-sm border-2 border-pink-200 dark:border-pink-800 overflow-hidden transition-all">
+          <div className="p-4 sm:p-6">
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white">
+                    Loyihamizni Qo'llab-quvvatlang
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                    Ixtiyoriy xayriya
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowDonation(!showDonation)}
+                className="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 transition-colors"
+              >
+                <CreditCard size={20} />
+              </button>
+            </div>
+
+            <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 mb-3 sm:mb-4 leading-relaxed">
+              Agar saytimizdan foydalanib{" "}
+              <span className="font-semibold text-pink-600 dark:text-pink-400">
+                haydovchilik guvohnomasini
+              </span>{" "}
+              olishga muvaffaq bo'lsangiz, biz uchun kichik bir{" "}
+              <span className="font-semibold">xayriya qilishingiz mumkin</span>.
+              Bu <span className="italic">ixtiyoriy</span> bo'lib, loyihamizni
+              rivojlantirishga yordam beradi. 🙏
+            </p>
+
+            {showDonation && (
+              <div className="bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-pink-200 dark:border-pink-700 animate-fadeIn">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">
+                    Karta raqami
+                  </span>
+                  <span className="text-[10px] sm:text-xs bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 px-2 py-0.5 rounded-full">
+                    Uzcard
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex-1 bg-slate-50 dark:bg-slate-700 p-2.5 sm:p-3 rounded-lg font-mono text-sm sm:text-base font-bold text-slate-800 dark:text-white tracking-wider">
+                    8600 1234 5678 9012
+                  </div>
+                  <button
+                    onClick={copyCardNumber}
+                    className={`p-2.5 sm:p-3 rounded-lg transition-all ${
+                      copied
+                        ? "bg-green-500 text-white"
+                        : "bg-pink-500 hover:bg-pink-600 text-white"
+                    }`}
+                  >
+                    {copied ? (
+                      <Check size={18} className="sm:w-5 sm:h-5" />
+                    ) : (
+                      <Copy size={18} className="sm:w-5 sm:h-5" />
+                    )}
+                  </button>
+                </div>
+                <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 text-center italic">
+                  Karta raqamini nusxalash uchun tugmani bosing
+                </p>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-3 sm:mt-4 p-2 sm:p-3 bg-pink-100/50 dark:bg-pink-900/20 rounded-lg">
+              <span className="text-base sm:text-lg">💝</span>
+              <p>
+                Sizning qo'llab-quvvatlashingiz bizni yanada yaxshi xizmat
+                ko'rsatishga undaydi!
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
