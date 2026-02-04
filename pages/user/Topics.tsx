@@ -95,12 +95,27 @@ const Topics: React.FC = () => {
   // Har bir kategoriya uchun savol sonini hisoblash
   useEffect(() => {
     const allQuestions = getQuestions();
-    const updatedTopics = TOPICS.map((topic) => ({
-      ...topic,
-      questionCount: allQuestions.filter(
-        (q) => (q.category || "umumiy") === topic.id,
-      ).length,
-    }));
+    const updatedTopics = TOPICS.map((topic) => {
+      let questionCount = 0;
+
+      if (topic.id === "umumiy") {
+        // "umumiy" uchun category undefined yoki "umumiy" bo'lgan savollarni sanash
+        questionCount = allQuestions.filter(
+          (q) => !q.category || q.category === "umumiy",
+        ).length;
+      } else {
+        // Boshqa kategoriyalar uchun oddiy filter
+        questionCount = allQuestions.filter(
+          (q) => q.category === topic.id,
+        ).length;
+      }
+
+      return {
+        ...topic,
+        questionCount,
+      };
+    });
+
     setTopics(updatedTopics);
     setTotalQuestions(allQuestions.length);
   }, []);

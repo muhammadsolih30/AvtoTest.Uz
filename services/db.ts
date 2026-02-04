@@ -121,6 +121,13 @@ export const getQuestions = (): Question[] => safeGet(STORAGE_KEYS.QUESTIONS, []
 
 export const getQuestionsByCategory = (category: string): Question[] => {
   const allQuestions = getQuestions();
+  
+  // "umumiy" kategoriyasi uchun category undefined yoki "umumiy" bo'lgan savollarni qaytarish
+  if (category === "umumiy") {
+    return allQuestions.filter(q => !q.category || q.category === "umumiy");
+  }
+  
+  // Boshqa kategoriyalar uchun oddiy filter
   return allQuestions.filter(q => q.category === category);
 };
 
