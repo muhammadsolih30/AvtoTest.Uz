@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   BookOpen,
   FileText,
   Video,
   Download,
   ExternalLink,
+  ArrowLeft,
 } from "lucide-react";
 
 interface Material {
@@ -166,6 +168,7 @@ MRHH - Minimal Rezident Haq (2024 yil: 340,000 so'm)
 ];
 
 const StudyMaterials: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(
     null,
   );
@@ -213,10 +216,17 @@ const StudyMaterials: React.FC = () => {
       {/* Header */}
       <div className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-900 dark:to-purple-900 rounded-2xl p-6 text-white">
         <div className="flex items-center gap-3 mb-2">
+          <button
+            onClick={() => navigate("/user")}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            title="Orqaga qaytish"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
           <BookOpen className="w-8 h-8" />
           <h1 className="text-3xl font-bold">O'quv Materiallari</h1>
         </div>
-        <p className="text-indigo-100">
+        <p className="text-indigo-100 ml-12">
           Haydovchilik bo'yicha to'liq ma'lumotlar va qo'llanmalar
         </p>
       </div>

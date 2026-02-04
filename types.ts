@@ -1,4 +1,3 @@
-
 export enum Role {
   USER = 'USER',
   ADMIN = 'ADMIN',
@@ -27,6 +26,7 @@ export interface Question {
   };
   correctAnswer: 'A' | 'B' | 'C' | 'D';
   image?: string;
+  category?: string; // Savol kategoriyasi: 'jarimalar', 'belgilar', 'umumiy' va h.k.
 }
 
 export interface TestResultDetail {

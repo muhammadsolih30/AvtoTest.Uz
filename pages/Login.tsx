@@ -212,16 +212,21 @@ const Login: React.FC = () => {
         <div className="w-full max-w-md">
           {/* Mobile Logo - only on small screens */}
           <div className="lg:hidden mb-8 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-3">
               <Car size={28} className="text-blue-600 dark:text-blue-400" />
               <h1 className="text-3xl font-bold text-slate-800 dark:text-white">
                 AvtoTest
                 <span className="text-blue-600 dark:text-blue-400">.uz</span>
               </h1>
             </div>
-            <p className="text-slate-500 dark:text-slate-400 text-sm">
-              Bu sayt Muhammadsolih Abduvosiyev tomonidan qilingan
-            </p>
+            <div className="bg-blue-50 dark:bg-slate-700/50 rounded-xl p-4 border border-blue-100 dark:border-slate-600">
+              <p className="text-slate-600 dark:text-slate-300 text-sm font-medium mb-1">
+                Dasturchi
+              </p>
+              <p className="text-slate-800 dark:text-white font-bold text-base">
+                Muhammadsolih Abduvosiyev
+              </p>
+            </div>
           </div>
 
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl dark:border dark:border-slate-700 p-8 transition-colors">

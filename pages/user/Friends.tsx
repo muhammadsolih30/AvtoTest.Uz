@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import {
   getFriends,
   getFriendRequests,
@@ -10,17 +11,26 @@ import {
   createChallenge,
   getChallenges,
 } from "../../services/db";
-import { Users, UserPlus, Check, X, Swords, Trophy } from "lucide-react";
+import {
+  Users,
+  UserPlus,
+  Check,
+  X,
+  Swords,
+  Trophy,
+  ArrowLeft,
+} from "lucide-react";
 
 const Friends: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [friends, setFriends] = useState<any[]>([]);
   const [requests, setRequests] = useState<any[]>([]);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [challenges, setChallenges] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState<
-    "friends" | "requests" | "search" | "challenges"
+    "friends" | "requests" | "challenges"
   >("friends");
 
   useEffect(() => {
@@ -102,10 +112,19 @@ const Friends: React.FC = () => {
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-900 dark:to-pink-900 rounded-2xl p-6 text-white">
         <div className="flex items-center gap-3 mb-2">
+          <button
+            onClick={() => navigate("/user")}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            title="Orqaga qaytish"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
           <Users className="w-8 h-8" />
           <h1 className="text-3xl font-bold">Do'stlar</h1>
         </div>
-        <p className="text-purple-100">Do'stlar qo'shing va raqobatlashing!</p>
+        <p className="text-purple-100 ml-12">
+          Do'stlar qo'shing va raqobatlashing!
+        </p>
       </div>
 
       {/* Tabs */}
@@ -131,16 +150,6 @@ const Friends: React.FC = () => {
           So'rovlar ({requests.length})
         </button>
         <button
-          onClick={() => setActiveTab("search")}
-          className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
-            activeTab === "search"
-              ? "bg-blue-600 text-white"
-              : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
-          }`}
-        >
-          Qidirish
-        </button>
-        <button
           onClick={() => setActiveTab("challenges")}
           className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
             activeTab === "challenges"
@@ -161,12 +170,6 @@ const Friends: React.FC = () => {
               <p className="text-slate-500 dark:text-slate-400">
                 Hali do'stlaringiz yo'q
               </p>
-              <button
-                onClick={() => setActiveTab("search")}
-                className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Do'stlar qo'shish
-              </button>
             </div>
           ) : (
             myFriendsData.map((friend: any) => (
@@ -258,55 +261,6 @@ const Friends: React.FC = () => {
               );
             })
           )}
-        </div>
-      )}
-
-      {/* Search Tab */}
-      {activeTab === "search" && (
-        <div className="space-y-4">
-          <input
-            type="text"
-            placeholder="Foydalanuvchi nomini kiriting..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-
-          <div className="grid md:grid-cols-2 gap-4">
-            {filteredUsers.map((usr: any) => (
-              <div
-                key={usr.id}
-                className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                    {usr.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-slate-800 dark:text-white">
-                      {usr.name}
-                    </h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">
-                      {usr.totalPoints} ball
-                    </p>
-                  </div>
-                  {!hasPendingRequest(usr.id) ? (
-                    <button
-                      onClick={() => handleSendRequest(usr.id)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-                    >
-                      <UserPlus className="w-4 h-4" />
-                      Qo'shish
-                    </button>
-                  ) : (
-                    <span className="text-sm text-slate-500 dark:text-slate-400">
-                      So'rov yuborilgan
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       )}
 

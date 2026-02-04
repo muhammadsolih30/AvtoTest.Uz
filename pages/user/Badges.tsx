@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { getUserProgress, checkAndAwardBadges } from "../../services/db";
+import { useNavigate } from "react-router-dom";
 import {
   Award,
   Trophy,
@@ -10,6 +11,7 @@ import {
   Clock,
   Moon,
   Sun as SunIcon,
+  ArrowLeft,
 } from "lucide-react";
 
 interface BadgeInfo {
@@ -81,6 +83,7 @@ const BADGES: BadgeInfo[] = [
 
 const Badges: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [progress, setProgress] = useState<any>(null);
 
   useEffect(() => {
@@ -103,6 +106,13 @@ const Badges: React.FC = () => {
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-900 dark:to-indigo-900 rounded-2xl p-6 text-white">
         <div className="flex items-center gap-3 mb-2">
+          <button
+            onClick={() => navigate('/user')}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            title="Orqaga qaytish"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
           <Award className="w-8 h-8" />
           <h1 className="text-3xl font-bold">Yutuqlar va Nishonlar</h1>
         </div>

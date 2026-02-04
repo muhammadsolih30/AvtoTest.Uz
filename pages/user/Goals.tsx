@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import {
   getUserGoals,
   updateUserGoals,
   getResults,
   getUserProgress,
 } from "../../services/db";
-import { Target, TrendingUp, Calendar, CheckCircle } from "lucide-react";
+import {
+  Target,
+  TrendingUp,
+  Calendar,
+  CheckCircle,
+  ArrowLeft,
+} from "lucide-react";
 
 const Goals: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [goals, setGoals] = useState<any>(null);
   const [results, setResults] = useState<any[]>([]);
   const [progress, setProgress] = useState<any>(null);
@@ -90,6 +98,13 @@ const Goals: React.FC = () => {
       <div className="bg-gradient-to-r from-green-600 to-teal-600 dark:from-green-900 dark:to-teal-900 rounded-2xl p-6 text-white">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate("/user")}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              title="Orqaga qaytish"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
             <Target className="w-8 h-8" />
             <h1 className="text-3xl font-bold">Maqsadlar</h1>
           </div>
@@ -100,7 +115,7 @@ const Goals: React.FC = () => {
             {editing ? "Bekor qilish" : "Tahrirlash"}
           </button>
         </div>
-        <p className="text-green-100">
+        <p className="text-green-100 ml-12">
           O'zingizga maqsadlar qo'ying va ularni kuzatib boring
         </p>
       </div>
