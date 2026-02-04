@@ -35,7 +35,8 @@ const INITIAL_QUESTIONS: Question[] = [
       C: "Faqat o'ngga burilayotganlarga",
       D: "Hech kimga taqiqlanmaydi"
     },
-    correctAnswer: 'B'
+    correctAnswer: 'B',
+    category: 'qoidalar'
   },
   {
     id: 'q2',
@@ -46,7 +47,8 @@ const INITIAL_QUESTIONS: Question[] = [
       C: "50 km/soat",
       D: "100 km/soat"
     },
-    correctAnswer: 'A'
+    correctAnswer: 'A',
+    category: 'qoidalar'
   }
 ];
 
@@ -116,6 +118,11 @@ export const initDB = () => {
 };
 
 export const getQuestions = (): Question[] => safeGet(STORAGE_KEYS.QUESTIONS, []);
+
+export const getQuestionsByCategory = (category: string): Question[] => {
+  const allQuestions = getQuestions();
+  return allQuestions.filter(q => q.category === category);
+};
 
 export const saveQuestion = (question: Question) => {
   const questions = getQuestions();
