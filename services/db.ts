@@ -1,12 +1,17 @@
-
-import { Question, TestResult, User, Role, ActivityLog, ChatMessage } from '../types';
+import { Question, TestResult, User, Role, ActivityLog, ChatMessage, UserProgress, Badge, Friend, Challenge, Bookmark, UserGoal } from '../types';
 
 const STORAGE_KEYS = {
   QUESTIONS: 'avtotest_questions',
   RESULTS: 'avtotest_results',
   USERS: 'avtotest_users',
   ACTIVITY_LOGS: 'avtotest_activity_logs',
-  CHAT_MESSAGES: 'avtotest_conversations' 
+  CHAT_MESSAGES: 'avtotest_conversations',
+  USER_PROGRESS: 'avtotest_user_progress',
+  FRIENDS: 'avtotest_friends',
+  CHALLENGES: 'avtotest_challenges',
+  BOOKMARKS: 'avtotest_bookmarks',
+  STUDY_MATERIALS: 'avtotest_study_materials',
+  USER_GOALS: 'avtotest_user_goals',
 };
 
 const hashPassword = (str: string): string => {
@@ -405,4 +410,321 @@ export const resetSystem = (type: 'users' | 'questions' | 'all') => {
           safeSet(STORAGE_KEYS.QUESTIONS, INITIAL_QUESTIONS);
       }
     } catch(e) { console.error(e); }
+};
+
+// ==================== YANGI FUNKSIYALAR ====================
+
+// User Progress Functions
+export const getUserProgress = (userId: string) => {
+  const allProgress = safeGet(STORAGE_KEYS.USER_PROGRESS, []);
+  let progress = allProgress.find((p: any) => p.userId === userId);
+  
+  if (!progress) {
+    progress = {
+      userId,
+      level: 1,
+      xp: 0,
+      xpForNextLevel: 100,
+      badges: [],
+      streak: 0,
+      totalTestsTaken: 0,
+      perfectScores: 0,
+    };
+  }
+  
+  return progress;
+};
+
+export const updateUserProgress = (userId: string, updates: any) => {
+  const allProgress = safeGet(STORAGE_KEYS.USER_PROGRESS, []);
+  const index = allProgress.findIndex((p: any) => p.userId === userId);
+  
+  if (index >= 0) {
+    allProgress[index] = { ...allProgress[index], ...updates };
+  } else {
+    allProgress.push({ userId, ...updates });
+  }
+  
+  safeSet(STORAGE_KEYS.USER_PROGRESS, allProgress);
+  return allProgress[index >= 0 ? index : allProgress.length - 1];
+};
+
+export const addXP = (userId: string, xp: number) => {
+  const progress = getUserProgress(userId);
+  let newXP = progress.xp + xp;
+  let newLevel = progress.level;
+  let xpForNext = progress.xpForNextLevel;
+  
+  while (newXP >= xpForNext) {
+    newXP -= xpForNext;
+    newLevel++;
+    xpForNext = newLevel * 100;
+  }
+  
+  return updateUserProgress(userId, {
+    xp: newXP,
+    level: newLevel,
+    xpForNextLevel: xpForNext,
+  });
+};
+
+// Badge Functions
+export const earnBadge = (userId: string, badgeId: string) => {
+  const progress = getUserProgress(userId);
+  
+  if (!progress.badges.includes(badgeId)) {
+    const newBadges = [...progress.badges, badgeId];
+    updateUserProgress(userId, { badges: newBadges });
+    return true;
+  }
+  
+  return false;
+};
+
+export const checkAndAwardBadges = (userId: string) => {
+  const progress = getUserProgress(userId);
+  const results = getResults(userId);
+  const newBadges: string[] = [];
+  
+  // First test badge
+  if (progress.totalTestsTaken === 1 && !progress.badges.includes('FIRST_TEST')) {
+    earnBadge(userId, 'FIRST_TEST');
+    newBadges.push('FIRST_TEST');
+  }
+  
+  // 100% score badge
+  const perfectScores = results.filter(r => r.scorePercentage === 100).length;
+  if (perfectScores > 0 && !progress.badges.includes('SCORE_100')) {
+    earnBadge(userId, 'SCORE_100');
+    newBadges.push('SCORE_100');
+  }
+  
+  // 10 tests badge
+  if (results.length >= 10 && !progress.badges.includes('TESTS_10')) {
+    earnBadge(userId, 'TESTS_10');
+    newBadges.push('TESTS_10');
+  }
+  
+  // 50 tests badge
+  if (results.length >= 50 && !progress.badges.includes('TESTS_50')) {
+    earnBadge(userId, 'TESTS_50');
+    newBadges.push('TESTS_50');
+  }
+  
+  // 100 tests badge
+  if (results.length >= 100 && !progress.badges.includes('TESTS_100')) {
+    earnBadge(userId, 'TESTS_100');
+    newBadges.push('TESTS_100');
+  }
+  
+  return newBadges;
+};
+
+// Friends Functions
+export const getFriends = (userId: string) => {
+  const allFriends = safeGet(STORAGE_KEYS.FRIENDS, []);
+  return allFriends.filter((f: any) => 
+    (f.userId === userId || f.friendId === userId) && f.status === 'accepted'
+  );
+};
+
+export const getFriendRequests = (userId: string) => {
+  const allFriends = safeGet(STORAGE_KEYS.FRIENDS, []);
+  return allFriends.filter((f: any) => f.friendId === userId && f.status === 'pending');
+};
+
+export const sendFriendRequest = (userId: string, friendId: string) => {
+  const allFriends = safeGet(STORAGE_KEYS.FRIENDS, []);
+  
+  const exists = allFriends.find((f: any) => 
+    (f.userId === userId && f.friendId === friendId) ||
+    (f.userId === friendId && f.friendId === userId)
+  );
+  
+  if (exists) {
+    throw new Error('Friend request already exists');
+  }
+  
+  const newRequest = {
+    userId,
+    friendId,
+    status: 'pending',
+    addedAt: new Date().toISOString(),
+  };
+  
+  allFriends.push(newRequest);
+  safeSet(STORAGE_KEYS.FRIENDS, allFriends);
+  return newRequest;
+};
+
+export const acceptFriendRequest = (userId: string, friendId: string) => {
+  const allFriends = safeGet(STORAGE_KEYS.FRIENDS, []);
+  const request = allFriends.find((f: any) => 
+    f.userId === friendId && f.friendId === userId && f.status === 'pending'
+  );
+  
+  if (request) {
+    request.status = 'accepted';
+    safeSet(STORAGE_KEYS.FRIENDS, allFriends);
+    return request;
+  }
+  
+  throw new Error('Friend request not found');
+};
+
+export const removeFriend = (userId: string, friendId: string) => {
+  const allFriends = safeGet(STORAGE_KEYS.FRIENDS, []);
+  const filtered = allFriends.filter((f: any) => 
+    !((f.userId === userId && f.friendId === friendId) ||
+      (f.userId === friendId && f.friendId === userId))
+  );
+  safeSet(STORAGE_KEYS.FRIENDS, filtered);
+};
+
+// Challenge Functions
+export const getChallenges = (userId: string) => {
+  const allChallenges = safeGet(STORAGE_KEYS.CHALLENGES, []);
+  return allChallenges.filter((c: any) => 
+    c.challengerId === userId || c.challengedId === userId
+  );
+};
+
+export const createChallenge = (challengerId: string, challengedId: string, questionCount: number) => {
+  const allChallenges = safeGet(STORAGE_KEYS.CHALLENGES, []);
+  
+  const newChallenge = {
+    id: 'challenge_' + Date.now(),
+    challengerId,
+    challengedId,
+    status: 'pending',
+    questionCount,
+    createdAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
+  };
+  
+  allChallenges.push(newChallenge);
+  safeSet(STORAGE_KEYS.CHALLENGES, allChallenges);
+  return newChallenge;
+};
+
+export const acceptChallenge = (challengeId: string) => {
+  const allChallenges = safeGet(STORAGE_KEYS.CHALLENGES, []);
+  const challenge = allChallenges.find((c: any) => c.id === challengeId);
+  
+  if (challenge) {
+    challenge.status = 'accepted';
+    safeSet(STORAGE_KEYS.CHALLENGES, allChallenges);
+    return challenge;
+  }
+  
+  throw new Error('Challenge not found');
+};
+
+export const completeChallengeTest = (challengeId: string, userId: string, score: number) => {
+  const allChallenges = safeGet(STORAGE_KEYS.CHALLENGES, []);
+  const challenge = allChallenges.find((c: any) => c.id === challengeId);
+  
+  if (challenge) {
+    if (userId === challenge.challengerId) {
+      challenge.challengerScore = score;
+    } else {
+      challenge.challengedScore = score;
+    }
+    
+    if (challenge.challengerScore !== undefined && challenge.challengedScore !== undefined) {
+      challenge.status = 'completed';
+    }
+    
+    safeSet(STORAGE_KEYS.CHALLENGES, allChallenges);
+    return challenge;
+  }
+  
+  throw new Error('Challenge not found');
+};
+
+// Bookmark Functions
+export const getBookmarks = (userId: string) => {
+  const allBookmarks = safeGet(STORAGE_KEYS.BOOKMARKS, []);
+  return allBookmarks.filter((b: any) => b.userId === userId);
+};
+
+export const addBookmark = (userId: string, questionId: string, note?: string) => {
+  const allBookmarks = safeGet(STORAGE_KEYS.BOOKMARKS, []);
+  
+  const exists = allBookmarks.find((b: any) => 
+    b.userId === userId && b.questionId === questionId
+  );
+  
+  if (exists) {
+    throw new Error('Bookmark already exists');
+  }
+  
+  const newBookmark = {
+    id: 'bookmark_' + Date.now(),
+    userId,
+    questionId,
+    note,
+    createdAt: new Date().toISOString(),
+  };
+  
+  allBookmarks.push(newBookmark);
+  safeSet(STORAGE_KEYS.BOOKMARKS, allBookmarks);
+  return newBookmark;
+};
+
+export const removeBookmark = (bookmarkId: string) => {
+  const allBookmarks = safeGet(STORAGE_KEYS.BOOKMARKS, []);
+  const filtered = allBookmarks.filter((b: any) => b.id !== bookmarkId);
+  safeSet(STORAGE_KEYS.BOOKMARKS, filtered);
+};
+
+// Study Materials
+export const getStudyMaterials = () => {
+  return safeGet(STORAGE_KEYS.STUDY_MATERIALS, [
+    {
+      id: 'mat1',
+      title: "Yo'l harakati qoidalari - To'liq qo'llanma",
+      category: 'TRAFFIC_RULES',
+      type: 'article',
+      content: 'Yo\'l harakati qoidalari haqida batafsil ma\'lumot...'
+    },
+    {
+      id: 'mat2',
+      title: "Yo'l belgilari lug'ati",
+      category: 'ROAD_SIGNS',
+      type: 'article',
+      content: 'Barcha yo\'l belgilari va ularning ma\'nolari...'
+    },
+  ]);
+};
+
+// User Goals
+export const getUserGoals = (userId: string) => {
+  const allGoals = safeGet(STORAGE_KEYS.USER_GOALS, []);
+  let goal = allGoals.find((g: any) => g.userId === userId);
+  
+  if (!goal) {
+    goal = {
+      userId,
+      dailyTestTarget: 3,
+      accuracyTarget: 80,
+      weeklyTestTarget: 20,
+    };
+  }
+  
+  return goal;
+};
+
+export const updateUserGoals = (userId: string, goals: any) => {
+  const allGoals = safeGet(STORAGE_KEYS.USER_GOALS, []);
+  const index = allGoals.findIndex((g: any) => g.userId === userId);
+  
+  if (index >= 0) {
+    allGoals[index] = { ...allGoals[index], ...goals };
+  } else {
+    allGoals.push({ userId, ...goals });
+  }
+  
+  safeSet(STORAGE_KEYS.USER_GOALS, allGoals);
+  return allGoals[index >= 0 ? index : allGoals.length - 1];
 };

@@ -1,24 +1,28 @@
-
-import React from 'react';
-import { HashRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { UIProvider } from './context/UIContext';
-import { Role } from './types';
-import Navbar from './components/Navbar';
-import LoadingOverlay from './components/LoadingOverlay';
-import Landing from './pages/Landing';
-import Login from './pages/Login';
-import UserDashboard from './pages/user/UserDashboard';
-import Quiz from './pages/user/Quiz';
-import Result from './pages/user/Result';
-import History from './pages/user/History';
-import Profile from './pages/user/Profile';
-import Leaderboard from './pages/user/Leaderboard';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import { QuestionList, QuestionForm } from './pages/admin/QuestionManager';
-import Chat from './pages/Chat';
-import AdminMessages from './pages/admin/AdminMessages';
-import AdminChat from './pages/admin/AdminChat';
+import React from "react";
+import { HashRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { UIProvider } from "./context/UIContext";
+import { Role } from "./types";
+import Navbar from "./components/Navbar";
+import LoadingOverlay from "./components/LoadingOverlay";
+import Landing from "./pages/Landing";
+import Login from "./pages/Login";
+import UserDashboard from "./pages/user/UserDashboard";
+import Quiz from "./pages/user/Quiz";
+import Result from "./pages/user/Result";
+import History from "./pages/user/History";
+import Profile from "./pages/user/Profile";
+import Leaderboard from "./pages/user/Leaderboard";
+import Badges from "./pages/user/Badges";
+import Topics from "./pages/user/Topics";
+import Friends from "./pages/user/Friends";
+import Goals from "./pages/user/Goals";
+import StudyMaterials from "./pages/user/StudyMaterials";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import { QuestionList, QuestionForm } from "./pages/admin/QuestionManager";
+import Chat from "./pages/Chat";
+import AdminMessages from "./pages/admin/AdminMessages";
+import AdminChat from "./pages/admin/AdminChat";
 
 // Protected Route Component
 const ProtectedRoute = ({ allowedRoles }: { allowedRoles: Role[] }) => {
@@ -50,13 +54,17 @@ const App: React.FC = () => {
         <HashRouter>
           <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/login/:role" element={<Login />} />
-            
+            <Route path="/login" element={<Login />} />
+
             {/* User Routes */}
             <Route element={<LayoutWithNav />}>
               {/* Shared Routes (User & Admin) */}
-              <Route element={<ProtectedRoute allowedRoles={[Role.USER, Role.ADMIN]} />}>
-                 <Route path="/profile" element={<Profile />} />
+              <Route
+                element={
+                  <ProtectedRoute allowedRoles={[Role.USER, Role.ADMIN]} />
+                }
+              >
+                <Route path="/profile" element={<Profile />} />
               </Route>
 
               <Route element={<ProtectedRoute allowedRoles={[Role.USER]} />}>
@@ -66,6 +74,11 @@ const App: React.FC = () => {
                 <Route path="/history" element={<History />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="/chat" element={<Chat />} />
+                <Route path="/badges" element={<Badges />} />
+                <Route path="/topics" element={<Topics />} />
+                <Route path="/friends" element={<Friends />} />
+                <Route path="/goals" element={<Goals />} />
+                <Route path="/study-materials" element={<StudyMaterials />} />
               </Route>
 
               {/* Admin Routes */}
@@ -77,7 +90,6 @@ const App: React.FC = () => {
                 <Route path="/admin/chat/:userId" element={<AdminChat />} />
               </Route>
             </Route>
-
           </Routes>
         </HashRouter>
       </UIProvider>
