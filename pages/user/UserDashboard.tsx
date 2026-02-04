@@ -353,7 +353,7 @@ const UserDashboard: React.FC = () => {
                     Loyihamizni Qo'llab-quvvatlang
                   </h2>
                   <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                    Ixtiyoriy xayriya
+                    Ixtiyoriy danat
                   </p>
                 </div>
               </div>
@@ -371,9 +371,9 @@ const UserDashboard: React.FC = () => {
                 haydovchilik guvohnomasini
               </span>{" "}
               olishga muvaffaq bo'lsangiz, biz uchun kichik bir{" "}
-              <span className="font-semibold">xayriya qilishingiz mumkin</span>.
+              <span className="font-semibold">danat qilishingiz mumkin</span>.
               Bu <span className="italic">ixtiyoriy</span> bo'lib, loyihamizni
-              rivojlantirishga yordam beradi. 🙏
+              rivojlantirishga yordam beradi.
             </p>
 
             {showDonation && (
@@ -412,7 +412,7 @@ const UserDashboard: React.FC = () => {
             )}
 
             <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-3 sm:mt-4 p-2 sm:p-3 bg-pink-100/50 dark:bg-pink-900/20 rounded-lg">
-              <span className="text-base sm:text-lg">💝</span>
+              <span className="text-base sm:text-lg"></span>
               <p>
                 Sizning qo'llab-quvvatlashingiz bizni yanada yaxshi xizmat
                 ko'rsatishga undaydi!
