@@ -1,4 +1,4 @@
-import { Question, TestResult, User, Role, ActivityLog, ChatMessage, UserProgress, Badge, Friend, Challenge, Bookmark, UserGoal } from '../types';
+import { Question, TestResult, User, Role, ActivityLog, ChatMessage, UserProgress, Badge, Friend, Challenge, Bookmark, UserGoal, StudyMaterial } from '../types';
 
 const STORAGE_KEYS = {
   QUESTIONS: 'avtotest_questions',

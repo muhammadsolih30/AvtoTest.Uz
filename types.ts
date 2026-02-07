@@ -71,3 +71,64 @@ export interface AuthState {
   logout: () => void;
   updateUserProfile: (updatedUser: User) => void;
 }
+
+export interface UserProgress {
+  userId: string;
+  level: number;
+  xp: number;
+  xpForNextLevel: number;
+  totalTestsTaken: number;
+  badges: string[];
+  streak: number;
+  lastTestDate?: string;
+}
+
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  requirement: string;
+}
+
+export interface Friend {
+  userId: string;
+  friendId: string;
+  status: 'pending' | 'accepted';
+  addedAt: string;
+}
+
+export interface Challenge {
+  id: string;
+  challengerId: string;
+  challengedId: string;
+  status: 'pending' | 'accepted' | 'completed';
+  questionCount: number;
+  challengerScore?: number;
+  challengedScore?: number;
+  createdAt: string;
+  expiresAt: string;
+}
+
+export interface Bookmark {
+  id: string;
+  userId: string;
+  questionId: string;
+  note?: string;
+  createdAt: string;
+}
+
+export interface UserGoal {
+  userId: string;
+  dailyTestTarget: number;
+  accuracyTarget: number;
+  weeklyTestTarget: number;
+}
+
+export interface StudyMaterial {
+  id: string;
+  title: string;
+  category: string;
+  type: 'article' | 'video' | 'quiz';
+  content: string;
+}
