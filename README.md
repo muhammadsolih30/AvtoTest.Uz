@@ -1,3 +1,7 @@
+! link <p>https://avto-test-uz-zeta.vercel.app/#/login</p>
+admin kirish: muhammadsolihabduvosiyev
+admin parol: muhammadsolihadmin12345
+
 # AvtoTest.Uz — Backend Specification
 
 Bu hujjat frontend loyihani (React + TS) ko‘rib chiqib yozildi. Backend yo‘q, shu sababli bu **to‘liq qo‘llanma + ishchi backend kodi** sifatida backendchi uchun tayyorlandi.
