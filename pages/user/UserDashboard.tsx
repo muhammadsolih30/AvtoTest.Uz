@@ -346,7 +346,7 @@ const UserDashboard: React.FC = () => {
                     Qo'llab-quvvatlang
                   </h2>
                   <p className="text-sm text-rose-50 font-medium">
-                    Ixtiyoriy xayriya
+                    Ixtiyoriy danat
                   </p>
                 </div>
               </div>
@@ -378,7 +378,7 @@ const UserDashboard: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="flex-1 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl font-mono text-lg font-black text-slate-800 dark:text-white tracking-wider border-2 border-slate-200 dark:border-slate-500">
-                    8600 1234 5678 9012
+                    5614 6846 0540 4175
                   </div>
                   <button
                     onClick={copyCardNumber}
@@ -402,7 +402,7 @@ const UserDashboard: React.FC = () => {
             )}
 
             <div className="flex items-start gap-3 text-sm text-white mt-6 p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-              <span className="text-xl">💝</span>
+              <span className="text-xl"></span>
               <p className="font-medium leading-relaxed">
                 Sizning qo'llab-quvvatlashingiz bizni yanada yaxshi xizmat
                 ko'rsatishga undaydi!
